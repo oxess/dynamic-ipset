@@ -1,0 +1,84 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install build dependencies
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - devscripts
+          - debhelper
+          - dh-python
+          - python3-all
+          - python3-setuptools
+          - python3-pytest
+          - python3-pytest-mock
+          - ipset
+          - iptables
+        state: present
+
+    - name: Create build directory
+      ansible.builtin.file:
+        path: /build
+        state: directory
+        mode: "0755"
+
+    - name: Create tarball of project source
+      delegate_to: localhost
+      become: false
+      ansible.builtin.shell: |
+        cd "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+        tar --exclude='.git' --exclude='.tox' --exclude='__pycache__' \
+            --exclude='*.egg-info' --exclude='dist' --exclude='build' \
+            --exclude='.pytest_cache' --exclude='molecule' --exclude='.venv*' \
+            -czf /tmp/dynamic-ipset-src.tar.gz .
+      args:
+        creates: /tmp/dynamic-ipset-src.tar.gz
+
+    - name: Copy tarball to container
+      ansible.builtin.copy:
+        src: /tmp/dynamic-ipset-src.tar.gz
+        dest: /tmp/dynamic-ipset-src.tar.gz
+        mode: "0644"
+
+    - name: Extract tarball in container
+      ansible.builtin.unarchive:
+        src: /tmp/dynamic-ipset-src.tar.gz
+        dest: /build/
+        remote_src: true
+
+    - name: Build .deb package
+      ansible.builtin.shell: |
+        cd /build
+        dpkg-buildpackage -us -uc -b
+      args:
+        creates: /dynamic-ipset_*.deb
+      register: build_result
+      changed_when: build_result.rc == 0
+
+    - name: Find built .deb package
+      ansible.builtin.find:
+        paths: /
+        patterns: "dynamic-ipset_*.deb"
+        recurse: false
+      register: deb_files
+
+    - name: Install built .deb package
+      ansible.builtin.apt:
+        deb: "{{ deb_files.files[0].path }}"
+        state: present
+      when: deb_files.files | length > 0
+
+    - name: Verify dynamic-ipset is installed
+      ansible.builtin.command: dynamic-ipset --version
+      register: version_check
+      changed_when: false
+      failed_when: version_check.rc != 0
