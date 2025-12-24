@@ -1,6 +1,5 @@
 """Shared pytest fixtures for dynamic-ipset tests."""
 
-import os
 import shutil
 import tempfile
 from pathlib import Path

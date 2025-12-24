@@ -3,10 +3,10 @@
 import logging
 import subprocess
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Optional
 
 from .config import ListConfig
-from .constants import DEFAULT_PERIODIC, SERVICE_PREFIX, SYSTEMD_UNIT_DIR, TIMER_PREFIX
+from .constants import SERVICE_PREFIX, SYSTEMD_UNIT_DIR, TIMER_PREFIX
 from .exceptions import SystemdError
 from .validator import validate_list_name
 
@@ -98,10 +98,10 @@ class SystemdManager:
                 capture_output=True,
                 text=True,
             )
-        except FileNotFoundError:
-            raise SystemdError(f"systemctl command not found: {self.systemctl_cmd}")
+        except FileNotFoundError as e:
+            raise SystemdError(f"systemctl command not found: {self.systemctl_cmd}") from e
         except Exception as e:
-            raise SystemdError(f"Failed to run systemctl: {e}")
+            raise SystemdError(f"Failed to run systemctl: {e}") from e
 
         if check and result.returncode != 0:
             stderr = result.stderr.strip()
@@ -164,7 +164,7 @@ class SystemdManager:
             with open(timer_path, "w") as f:
                 f.write(timer_content)
         except OSError as e:
-            raise SystemdError(f"Cannot write unit files: {e}")
+            raise SystemdError(f"Cannot write unit files: {e}") from e
 
         logger.info("Created systemd units for %s", list_config.name)
 
@@ -198,7 +198,7 @@ class SystemdManager:
             if timer_path.exists():
                 timer_path.unlink()
         except OSError as e:
-            raise SystemdError(f"Cannot delete unit files: {e}")
+            raise SystemdError(f"Cannot delete unit files: {e}") from e
 
         logger.info("Deleted systemd units for %s", list_name)
 
@@ -270,7 +270,7 @@ class SystemdManager:
         result = self._run_systemctl(["is-active", timer], check=False)
         return result.returncode == 0
 
-    def get_status(self, list_name: str) -> Dict[str, any]:
+    def get_status(self, list_name: str) -> dict[str, any]:
         """
         Get detailed status of timer and service.
 

@@ -1,9 +1,9 @@
 """Configuration management for dynamic-ipset."""
 
 import configparser
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Optional
 
 from .constants import (
     CONFIG_D_DIR,
@@ -29,7 +29,7 @@ class ListConfig:
     max_entries: int = DEFAULT_MAX_ENTRIES
     enabled: bool = True
 
-    def to_dict(self) -> Dict[str, str]:
+    def to_dict(self) -> dict[str, str]:
         """Convert to dictionary for serialization."""
         return {
             "source_url": self.source_url,
@@ -41,7 +41,7 @@ class ListConfig:
         }
 
     @classmethod
-    def from_dict(cls, name: str, data: Dict[str, str]) -> "ListConfig":
+    def from_dict(cls, name: str, data: dict[str, str]) -> "ListConfig":
         """Create from dictionary."""
         source_url = data.get("source_url")
         if not source_url:
@@ -80,14 +80,14 @@ class ConfigManager:
         """Get config file path for a specific list."""
         return self.config_d_dir / f"{name}.conf"
 
-    def load_all(self) -> Dict[str, ListConfig]:
+    def load_all(self) -> dict[str, ListConfig]:
         """
         Load all list configurations from config.d directory.
 
         Returns:
             Dictionary mapping list names to their configurations
         """
-        lists: Dict[str, ListConfig] = {}
+        lists: dict[str, ListConfig] = {}
 
         if not self.config_d_dir.exists():
             return lists
@@ -98,7 +98,7 @@ class ConfigManager:
             try:
                 parser.read(conf_file)
             except configparser.Error as e:
-                raise ConfigError(f"Error reading {conf_file}: {e}")
+                raise ConfigError(f"Error reading {conf_file}: {e}") from e
 
             for section in parser.sections():
                 if section.startswith("list:"):
@@ -107,7 +107,7 @@ class ConfigManager:
                     try:
                         lists[name] = ListConfig.from_dict(name, data)
                     except (ValueError, ConfigError) as e:
-                        raise ConfigError(f"Error in {conf_file}: {e}")
+                        raise ConfigError(f"Error in {conf_file}: {e}") from e
 
         return lists
 
@@ -134,7 +134,7 @@ class ConfigManager:
         try:
             parser.read(conf_path)
         except configparser.Error as e:
-            raise ConfigError(f"Error reading config for '{name}': {e}")
+            raise ConfigError(f"Error reading config for '{name}': {e}") from e
 
         section = f"list:{name}"
         if not parser.has_section(section):
@@ -178,7 +178,7 @@ class ConfigManager:
             with open(conf_path, "w") as f:
                 parser.write(f)
         except OSError as e:
-            raise ConfigError(f"Cannot write config for '{list_config.name}': {e}")
+            raise ConfigError(f"Cannot write config for '{list_config.name}': {e}") from e
 
         return conf_path
 
@@ -201,7 +201,7 @@ class ConfigManager:
         try:
             conf_path.unlink()
         except OSError as e:
-            raise ConfigError(f"Cannot delete config for '{name}': {e}")
+            raise ConfigError(f"Cannot delete config for '{name}': {e}") from e
 
     def exists(self, name: str) -> bool:
         """

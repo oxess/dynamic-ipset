@@ -1,13 +1,12 @@
 """Tests for CLI module."""
 
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import Mock, MagicMock, patch
-import io
-import sys
 
 from dynamic_ipset.cli import CLI, main
 from dynamic_ipset.config import ListConfig
-from dynamic_ipset.exceptions import ConfigError, FetchError
+from dynamic_ipset.exceptions import ConfigError
 
 
 class TestCLI:

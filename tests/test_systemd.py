@@ -1,12 +1,13 @@
 """Tests for systemd module."""
 
 import subprocess
-import pytest
 from unittest.mock import MagicMock, patch
 
-from dynamic_ipset.systemd import SystemdManager, SERVICE_TEMPLATE, TIMER_TEMPLATE
+import pytest
+
 from dynamic_ipset.config import ListConfig
 from dynamic_ipset.exceptions import SystemdError
+from dynamic_ipset.systemd import SERVICE_TEMPLATE, TIMER_TEMPLATE, SystemdManager
 
 
 def make_result(returncode=0, stdout="", stderr=""):

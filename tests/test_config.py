@@ -3,7 +3,7 @@
 import pytest
 
 from dynamic_ipset.config import ConfigManager, ListConfig
-from dynamic_ipset.constants import DEFAULT_PERIODIC, DEFAULT_IPSET_TYPE
+from dynamic_ipset.constants import DEFAULT_IPSET_TYPE, DEFAULT_PERIODIC
 from dynamic_ipset.exceptions import ConfigError, ValidationError
 
 

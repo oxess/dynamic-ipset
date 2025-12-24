@@ -2,7 +2,7 @@
 
 import logging
 import subprocess
-from typing import List, Optional
+from typing import Optional
 
 from .constants import DEFAULT_IPSET_FAMILY, DEFAULT_IPSET_TYPE, DEFAULT_MAX_ENTRIES
 from .exceptions import IPSetError
@@ -25,7 +25,7 @@ class IPSetManager:
 
     def _run(
         self,
-        args: List[str],
+        args: list[str],
         check: bool = True,
         input_data: Optional[str] = None,
     ) -> subprocess.CompletedProcess:
@@ -53,10 +53,10 @@ class IPSetManager:
                 text=True,
                 input=input_data,
             )
-        except FileNotFoundError:
-            raise IPSetError(f"ipset command not found: {self.ipset_cmd}")
+        except FileNotFoundError as e:
+            raise IPSetError(f"ipset command not found: {self.ipset_cmd}") from e
         except Exception as e:
-            raise IPSetError(f"Failed to run ipset: {e}")
+            raise IPSetError(f"Failed to run ipset: {e}") from e
 
         if check and result.returncode != 0:
             stderr = result.stderr.strip()
@@ -167,7 +167,7 @@ class IPSetManager:
         # Use -exist to avoid errors on duplicates
         self._run(["add", name, entry, "-exist"])
 
-    def add_many(self, name: str, entries: List[str]) -> int:
+    def add_many(self, name: str, entries: list[str]) -> int:
         """
         Add multiple entries efficiently using restore.
 
@@ -211,7 +211,7 @@ class IPSetManager:
     def update(
         self,
         name: str,
-        entries: List[str],
+        entries: list[str],
         ipset_type: str = DEFAULT_IPSET_TYPE,
         family: str = DEFAULT_IPSET_FAMILY,
         max_entries: int = DEFAULT_MAX_ENTRIES,
@@ -273,7 +273,7 @@ class IPSetManager:
                     pass
             raise
 
-    def list_entries(self, name: str) -> List[str]:
+    def list_entries(self, name: str) -> list[str]:
         """
         List all entries in an ipset.
 
@@ -302,7 +302,7 @@ class IPSetManager:
 
         return entries
 
-    def list_all(self) -> List[str]:
+    def list_all(self) -> list[str]:
         """
         List all ipset names.
 

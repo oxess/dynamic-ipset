@@ -2,9 +2,8 @@
 
 import logging
 import ssl
-from typing import List, Tuple
-from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
+from urllib.request import urlopen
 
 from .constants import COMMENT_CHARS, DEFAULT_TIMEOUT
 from .exceptions import FetchError, ValidationError
@@ -25,7 +24,7 @@ class IPListFetcher:
         """
         self.timeout = timeout
 
-    def fetch(self, url: str) -> Tuple[List[str], List[str]]:
+    def fetch(self, url: str) -> tuple[list[str], list[str]]:
         """
         Fetch IP list from URL.
 
@@ -47,15 +46,15 @@ class IPListFetcher:
             content = response.read().decode("utf-8", errors="replace")
             return self._parse_ip_list(content)
         except HTTPError as e:
-            raise FetchError(f"HTTP error {e.code}: {url}")
+            raise FetchError(f"HTTP error {e.code}: {url}") from e
         except URLError as e:
-            raise FetchError(f"URL error: {e.reason} - {url}")
-        except TimeoutError:
-            raise FetchError(f"Timeout fetching {url}")
+            raise FetchError(f"URL error: {e.reason} - {url}") from e
+        except TimeoutError as e:
+            raise FetchError(f"Timeout fetching {url}") from e
         except Exception as e:
-            raise FetchError(f"Failed to fetch {url}: {e}")
+            raise FetchError(f"Failed to fetch {url}: {e}") from e
 
-    def _parse_ip_list(self, content: str) -> Tuple[List[str], List[str]]:
+    def _parse_ip_list(self, content: str) -> tuple[list[str], list[str]]:
         """
         Parse IP list content.
 
@@ -72,8 +71,8 @@ class IPListFetcher:
         Returns:
             Tuple of (valid_entries, parse_errors)
         """
-        entries: List[str] = []
-        errors: List[str] = []
+        entries: list[str] = []
+        errors: list[str] = []
 
         for line_num, line in enumerate(content.splitlines(), 1):
             line = line.strip()
@@ -102,7 +101,7 @@ class IPListFetcher:
 
         return entries, errors
 
-    def _split_entries(self, line: str) -> List[str]:
+    def _split_entries(self, line: str) -> list[str]:
         """
         Split a line into individual entries.
 
@@ -154,16 +153,16 @@ class IPListFetcher:
             response = urlopen(url, timeout=self.timeout, context=context)
             return response.read().decode("utf-8", errors="replace")
         except HTTPError as e:
-            raise FetchError(f"HTTP error {e.code}: {url}")
+            raise FetchError(f"HTTP error {e.code}: {url}") from e
         except URLError as e:
-            raise FetchError(f"URL error: {e.reason} - {url}")
-        except TimeoutError:
-            raise FetchError(f"Timeout fetching {url}")
+            raise FetchError(f"URL error: {e.reason} - {url}") from e
+        except TimeoutError as e:
+            raise FetchError(f"Timeout fetching {url}") from e
         except Exception as e:
-            raise FetchError(f"Failed to fetch {url}: {e}")
+            raise FetchError(f"Failed to fetch {url}: {e}") from e
 
 
-def fetch_ip_list(url: str, timeout: int = DEFAULT_TIMEOUT) -> Tuple[List[str], List[str]]:
+def fetch_ip_list(url: str, timeout: int = DEFAULT_TIMEOUT) -> tuple[list[str], list[str]]:
     """
     Convenience function to fetch an IP list.
 

@@ -2,7 +2,6 @@
 
 import ipaddress
 import re
-from typing import Tuple
 from urllib.parse import urlparse
 
 from .constants import LIST_NAME_PATTERN
@@ -72,7 +71,7 @@ def validate_ipv6(ip: str) -> bool:
         return False
 
 
-def validate_ip(ip: str) -> Tuple[bool, int]:
+def validate_ip(ip: str) -> tuple[bool, int]:
     """
     Validate IP address (IPv4 or IPv6).
 
@@ -89,7 +88,7 @@ def validate_ip(ip: str) -> Tuple[bool, int]:
         return False, 0
 
 
-def validate_cidr(cidr: str) -> Tuple[str, int, str]:
+def validate_cidr(cidr: str) -> tuple[str, int, str]:
     """
     Validate CIDR notation (e.g., 192.168.1.0/24 or 2001:db8::/32).
 
@@ -113,15 +112,15 @@ def validate_cidr(cidr: str) -> Tuple[str, int, str]:
                 return str(addr), 32, "inet"
             else:
                 return str(addr), 128, "inet6"
-        except ValueError:
-            raise ValidationError(f"Invalid IP address: {cidr}")
+        except ValueError as e:
+            raise ValidationError(f"Invalid IP address: {cidr}") from e
 
     try:
         network = ipaddress.ip_network(cidr, strict=False)
         family = "inet" if network.version == 4 else "inet6"
         return str(network.network_address), network.prefixlen, family
     except ValueError as e:
-        raise ValidationError(f"Invalid CIDR: {cidr} - {e}")
+        raise ValidationError(f"Invalid CIDR: {cidr} - {e}") from e
 
 
 def validate_url(url: str) -> bool:
@@ -203,7 +202,7 @@ def validate_oncalendar(spec: str) -> bool:
     return True
 
 
-def parse_ip_entry(entry: str) -> Tuple[str, str]:
+def parse_ip_entry(entry: str) -> tuple[str, str]:
     """
     Parse an IP entry from a list file.
 

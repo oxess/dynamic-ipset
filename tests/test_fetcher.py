@@ -1,10 +1,11 @@
 """Tests for fetcher module."""
 
-import pytest
 from unittest.mock import Mock, patch
 
-from dynamic_ipset.fetcher import IPListFetcher, fetch_ip_list
+import pytest
+
 from dynamic_ipset.exceptions import FetchError
+from dynamic_ipset.fetcher import IPListFetcher, fetch_ip_list
 
 
 class TestIPListFetcher:

@@ -4,13 +4,12 @@ import argparse
 import logging
 import os
 import sys
-from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from . import __version__
 from .config import ConfigManager, ListConfig
 from .constants import DEFAULT_PERIODIC
-from .exceptions import DynamicIPSetError, ConfigError
+from .exceptions import ConfigError, DynamicIPSetError
 from .fetcher import IPListFetcher
 from .ipset import IPSetManager
 from .systemd import SystemdManager
@@ -395,7 +394,7 @@ class CLI:
         print(f"Update triggered for '{args.name}'")
         return 0
 
-    def run(self, argv: Optional[List[str]] = None) -> int:
+    def run(self, argv: Optional[list[str]] = None) -> int:
         """
         Main entry point.
 
@@ -439,7 +438,7 @@ class CLI:
             return 1
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: Optional[list[str]] = None) -> int:
     """Entry point for the CLI."""
     cli = CLI()
     return cli.run(argv)

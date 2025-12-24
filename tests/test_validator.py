@@ -2,6 +2,7 @@
 
 import pytest
 
+from dynamic_ipset.exceptions import ValidationError
 from dynamic_ipset.validator import (
     parse_ip_entry,
     validate_cidr,
@@ -12,7 +13,6 @@ from dynamic_ipset.validator import (
     validate_oncalendar,
     validate_url,
 )
-from dynamic_ipset.exceptions import ValidationError
 
 
 class TestValidateListName:

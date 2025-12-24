@@ -1,11 +1,12 @@
 """Tests for ipset module."""
 
 import subprocess
-import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from dynamic_ipset.ipset import IPSetManager
+import pytest
+
 from dynamic_ipset.exceptions import IPSetError, ValidationError
+from dynamic_ipset.ipset import IPSetManager
 
 
 def make_result(returncode=0, stdout="", stderr=""):
