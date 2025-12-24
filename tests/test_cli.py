@@ -48,9 +48,7 @@ class TestCLI:
     def test_parse_create_with_periodic(self, cli):
         """Test parsing create with periodic."""
         parser = cli.create_parser()
-        args = parser.parse_args([
-            "create", "mylist", "http://example.com/list.txt", "daily"
-        ])
+        args = parser.parse_args(["create", "mylist", "http://example.com/list.txt", "daily"])
         assert args.periodic == "daily"
 
     def test_parse_delete_command(self, cli):
@@ -110,9 +108,7 @@ class TestCLI:
         fetcher.fetch.return_value = (["192.168.1.0/24"], [])
 
         parser = cli.create_parser()
-        args = parser.parse_args([
-            "create", "mylist", "http://example.com", "--no-enable"
-        ])
+        args = parser.parse_args(["create", "mylist", "http://example.com", "--no-enable"])
 
         cli.cmd_create(args)
 
@@ -124,9 +120,7 @@ class TestCLI:
         config.exists.return_value = False
 
         parser = cli.create_parser()
-        args = parser.parse_args([
-            "create", "mylist", "http://example.com", "--no-fetch"
-        ])
+        args = parser.parse_args(["create", "mylist", "http://example.com", "--no-fetch"])
 
         cli.cmd_create(args)
 

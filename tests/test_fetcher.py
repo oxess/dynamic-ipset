@@ -172,9 +172,7 @@ fe80::1"""
         """Test fetch with HTTP error."""
         from urllib.error import HTTPError
 
-        mock_urlopen.side_effect = HTTPError(
-            "http://example.com", 404, "Not Found", {}, None
-        )
+        mock_urlopen.side_effect = HTTPError("http://example.com", 404, "Not Found", {}, None)
 
         fetcher = IPListFetcher()
         with pytest.raises(FetchError, match="HTTP error 404"):
@@ -217,9 +215,7 @@ fe80::1"""
         """Test raw fetch with error."""
         from urllib.error import HTTPError
 
-        mock_urlopen.side_effect = HTTPError(
-            "http://example.com", 500, "Server Error", {}, None
-        )
+        mock_urlopen.side_effect = HTTPError("http://example.com", 500, "Server Error", {}, None)
 
         fetcher = IPListFetcher()
         with pytest.raises(FetchError, match="HTTP error 500"):

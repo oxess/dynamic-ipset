@@ -249,7 +249,7 @@ Size in memory: 1024
 Members:
 192.168.1.0/24
 10.0.0.0/8
-"""
+""",
         )
 
         manager = IPSetManager()
@@ -269,7 +269,7 @@ Type: hash:net
 Header: family inet hashsize 1024 maxelem 65536
 Size in memory: 1024
 Members:
-"""
+""",
         )
 
         manager = IPSetManager()
@@ -280,10 +280,7 @@ Members:
     @patch("subprocess.run")
     def test_list_all(self, mock_run):
         """Test listing all ipsets."""
-        mock_run.return_value = make_result(
-            returncode=0,
-            stdout="blocklist\nwhitelist\ntestlist\n"
-        )
+        mock_run.return_value = make_result(returncode=0, stdout="blocklist\nwhitelist\ntestlist\n")
 
         manager = IPSetManager()
         sets = manager.list_all()
@@ -305,7 +302,7 @@ Header: family inet hashsize 1024 maxelem 65536
 Size in memory: 2048
 References: 0
 Number of entries: 42
-"""
+""",
         )
 
         manager = IPSetManager()
@@ -326,7 +323,7 @@ Number of entries: 42
 Type: hash:net
 Header: family inet hashsize 1024 maxelem 65536
 Number of entries: 100
-"""
+""",
         )
 
         manager = IPSetManager()
@@ -346,10 +343,7 @@ Number of entries: 100
     @patch("subprocess.run")
     def test_command_failure(self, mock_run):
         """Test handling ipset command failure."""
-        mock_run.return_value = make_result(
-            returncode=1,
-            stderr="Permission denied"
-        )
+        mock_run.return_value = make_result(returncode=1, stderr="Permission denied")
 
         manager = IPSetManager()
         with pytest.raises(IPSetError, match="Permission denied"):
