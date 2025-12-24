@@ -1,0 +1,12 @@
+dynamic-ipset (0.1.0-1) unstable; urgency=medium
+
+  * Initial release.
+  * Features:
+    - Fetch IP lists from HTTP/HTTPS URLs
+    - Support for IPv4 and IPv6 addresses and CIDR notation
+    - Atomic ipset updates using temp set + swap pattern
+    - Systemd timer-based periodic updates (default: every 3 hours)
+    - INI-based configuration in /etc/dynamic-ipset/
+    - CLI commands: create, delete, show, edit, reload, update, enable, disable, run
+
+ -- Dynamic IPSet Contributors <noreply@example.com>  Tue, 24 Dec 2024 14:00:00 +0000

@@ -1,0 +1,34 @@
+Source: dynamic-ipset
+Section: net
+Priority: optional
+Maintainer: Dynamic IPSet Contributors <noreply@example.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools,
+               python3-pytest <!nocheck>,
+               python3-pytest-mock <!nocheck>
+Standards-Version: 4.6.2
+Homepage: https://github.com/oxess/dynamic-ipset
+Vcs-Git: https://github.com/oxess/dynamic-ipset.git
+Vcs-Browser: https://github.com/oxess/dynamic-ipset
+Rules-Requires-Root: no
+
+Package: dynamic-ipset
+Architecture: all
+Depends: ${python3:Depends},
+         ${misc:Depends},
+         ipset,
+         systemd
+Description: Dynamic ipset management from URL sources
+ Dynamic IPSet is a tool for managing Linux ipset rules by fetching
+ IP address lists from URLs and updating them periodically via systemd
+ timers.
+ .
+ Features:
+  - Fetch IP lists from HTTP/HTTPS URLs
+  - Support for IPv4 and IPv6 addresses and CIDR notation
+  - Atomic ipset updates (no traffic interruption)
+  - Systemd timer-based periodic updates
+  - INI-based configuration
+  - CLI for easy management

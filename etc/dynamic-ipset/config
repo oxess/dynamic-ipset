@@ -1,0 +1,27 @@
+# Dynamic IPSet Global Configuration
+# This is the main configuration file for dynamic-ipset.
+#
+# Per-list configurations should be placed in /etc/dynamic-ipset/config.d/
+# Each list should have its own file: config.d/<name>.conf
+
+[global]
+# Default update schedule (OnCalendar format)
+# Examples: hourly, daily, *-*-* 0/3:00:00 (every 3 hours)
+default_periodic = *-*-* 0/3:00:00
+
+# Default ipset type
+# Options: hash:ip, hash:net, hash:ip,port, etc.
+default_ipset_type = hash:net
+
+# Default IP family
+# Options: inet (IPv4), inet6 (IPv6)
+default_family = inet
+
+# Default maximum entries
+default_max_entries = 65536
+
+# HTTP timeout in seconds
+http_timeout = 30
+
+# Log level (debug, info, warning, error)
+log_level = info

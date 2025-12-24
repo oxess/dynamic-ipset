@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+"""Dynamic IPSet CLI entry point."""
+
+import sys
+
+from dynamic_ipset.cli import main
+
+if __name__ == "__main__":
+    sys.exit(main())

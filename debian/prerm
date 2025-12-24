@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    remove|upgrade|deconfigure)
+        # Stop all dynamic-ipset timers before removal
+        if [ -d /run/systemd/system ]; then
+            systemctl stop 'dynamic-ipset@*.timer' 2>/dev/null || true
+            systemctl disable 'dynamic-ipset@*.timer' 2>/dev/null || true
+        fi
+        ;;
+    failed-upgrade)
+        ;;
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

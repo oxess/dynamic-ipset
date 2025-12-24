@@ -1,0 +1,4 @@
+bin/dynamic-ipset usr/bin
+etc/dynamic-ipset/config etc/dynamic-ipset
+systemd/dynamic-ipset@.service lib/systemd/system
+systemd/dynamic-ipset@.timer lib/systemd/system

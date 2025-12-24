@@ -1,0 +1,12 @@
+[Unit]
+Description=Periodic update timer for ipset %i
+Documentation=man:dynamic-ipset(8)
+ConditionPathExists=/etc/dynamic-ipset/config.d/%i.conf
+
+[Timer]
+OnCalendar=*-*-* 0/3:00:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

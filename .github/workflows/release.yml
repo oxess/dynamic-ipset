@@ -1,0 +1,106 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-packages:
+    name: Build packages (${{ matrix.distro }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: debian:bullseye
+            name: bullseye
+          - distro: debian:bookworm
+            name: bookworm
+          - distro: debian:trixie
+            name: trixie
+          - distro: ubuntu:22.04
+            name: jammy
+          - distro: ubuntu:24.04
+            name: noble
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build .deb package
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/build -w /build ${{ matrix.distro }} bash -c "
+            apt-get update
+            apt-get install -y build-essential devscripts debhelper dh-python python3-all python3-setuptools python3-pytest python3-pytest-mock
+            dpkg-buildpackage -us -uc -b
+            mkdir -p /build/dist
+            cp ../*.deb /build/dist/
+          "
+
+      - name: Rename package
+        run: |
+          cd dist
+          for f in *.deb; do
+            mv "$f" "${f%.deb}_${{ matrix.name }}.deb"
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-${{ matrix.name }}
+          path: dist/*.deb
+
+  build-pypi:
+    name: Build Python package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build tools
+        run: pip install build twine
+
+      - name: Build package
+        run: python -m build
+
+      - name: Check package
+        run: twine check dist/*
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package
+          path: dist/*
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build-packages, build-pypi]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Collect release files
+        run: |
+          mkdir -p release
+          find artifacts -name "*.deb" -exec cp {} release/ \;
+          find artifacts -name "*.whl" -exec cp {} release/ \;
+          find artifacts -name "*.tar.gz" -exec cp {} release/ \;
+          ls -la release/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/*
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
