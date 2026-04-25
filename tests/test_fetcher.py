@@ -106,6 +106,43 @@ fe80::1"""
         assert len(entries) == 4
         assert len(errors) == 0
 
+    def test_parse_mixed_list_filter_inet(self):
+        """Test that IPv6 entries are filtered out when family=inet."""
+        fetcher = IPListFetcher()
+        content = """192.168.1.0/24
+2001:db8::/32
+8.8.8.8
+::1"""
+        entries, errors = fetcher._parse_ip_list(content, family="inet")
+        assert len(entries) == 2
+        assert len(errors) == 0
+        assert "192.168.1.0/24" in entries
+        assert "8.8.8.8/32" in entries
+
+    def test_parse_mixed_list_filter_inet6(self):
+        """Test that IPv4 entries are filtered out when family=inet6."""
+        fetcher = IPListFetcher()
+        content = """192.168.1.0/24
+2001:db8::/32
+8.8.8.8
+::1"""
+        entries, errors = fetcher._parse_ip_list(content, family="inet6")
+        assert len(entries) == 2
+        assert len(errors) == 0
+        assert "2001:db8::/32" in entries
+        assert "::1/128" in entries
+
+    def test_parse_mixed_list_no_filter(self):
+        """Test that all entries pass when family=None."""
+        fetcher = IPListFetcher()
+        content = """192.168.1.0/24
+2001:db8::/32
+8.8.8.8
+::1"""
+        entries, errors = fetcher._parse_ip_list(content, family=None)
+        assert len(entries) == 4
+        assert len(errors) == 0
+
     def test_parse_multiple_entries_per_line(self):
         """Test parsing multiple entries on a single line."""
         fetcher = IPListFetcher()

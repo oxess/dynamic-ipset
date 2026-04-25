@@ -24,12 +24,14 @@ class IPListFetcher:
         """
         self.timeout = timeout
 
-    def fetch(self, url: str) -> tuple[list[str], list[str]]:
+    def fetch(self, url: str, family: str | None = None) -> tuple[list[str], list[str]]:
         """
         Fetch IP list from URL.
 
         Args:
             url: The URL to fetch from
+            family: IP family filter ('inet' or 'inet6'). If set,
+                    entries not matching this family are skipped.
 
         Returns:
             Tuple of (valid_entries, parse_errors)
@@ -44,7 +46,7 @@ class IPListFetcher:
             context = ssl.create_default_context()
             response = urlopen(url, timeout=self.timeout, context=context)
             content = response.read().decode("utf-8", errors="replace")
-            return self._parse_ip_list(content)
+            return self._parse_ip_list(content, family)
         except HTTPError as e:
             raise FetchError(f"HTTP error {e.code}: {url}") from e
         except URLError as e:
@@ -54,7 +56,9 @@ class IPListFetcher:
         except Exception as e:
             raise FetchError(f"Failed to fetch {url}: {e}") from e
 
-    def _parse_ip_list(self, content: str) -> tuple[list[str], list[str]]:
+    def _parse_ip_list(
+        self, content: str, family: str | None = None
+    ) -> tuple[list[str], list[str]]:
         """
         Parse IP list content.
 
@@ -67,12 +71,15 @@ class IPListFetcher:
 
         Args:
             content: The raw content from the URL
+            family: IP family filter ('inet' or 'inet6'). If set,
+                    entries not matching this family are skipped.
 
         Returns:
             Tuple of (valid_entries, parse_errors)
         """
         entries: list[str] = []
         errors: list[str] = []
+        skipped = 0
 
         for line_num, line in enumerate(content.splitlines(), 1):
             line = line.strip()
@@ -94,10 +101,18 @@ class IPListFetcher:
                     continue
 
                 try:
-                    entry, family = parse_ip_entry(part)
+                    entry, entry_family = parse_ip_entry(part)
+                    if family and entry_family != family:
+                        skipped += 1
+                        continue
                     entries.append(entry)
                 except ValidationError as e:
                     errors.append(f"Line {line_num}: {e}")
+
+        if skipped:
+            logger.debug(
+                "Skipped %d entries not matching family '%s'", skipped, family
+            )
 
         return entries, errors
 
@@ -162,13 +177,16 @@ class IPListFetcher:
             raise FetchError(f"Failed to fetch {url}: {e}") from e
 
 
-def fetch_ip_list(url: str, timeout: int = DEFAULT_TIMEOUT) -> tuple[list[str], list[str]]:
+def fetch_ip_list(
+    url: str, timeout: int = DEFAULT_TIMEOUT, family: str | None = None
+) -> tuple[list[str], list[str]]:
     """
     Convenience function to fetch an IP list.
 
     Args:
         url: The URL to fetch from
         timeout: HTTP request timeout in seconds
+        family: IP family filter ('inet' or 'inet6')
 
     Returns:
         Tuple of (valid_entries, parse_errors)
@@ -177,4 +195,4 @@ def fetch_ip_list(url: str, timeout: int = DEFAULT_TIMEOUT) -> tuple[list[str], 
         FetchError: If the URL cannot be fetched
     """
     fetcher = IPListFetcher(timeout=timeout)
-    return fetcher.fetch(url)
+    return fetcher.fetch(url, family=family)

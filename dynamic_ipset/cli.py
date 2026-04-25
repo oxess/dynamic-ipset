@@ -337,7 +337,7 @@ class CLI:
         """Perform the actual update for a list."""
         print(f"Fetching IP list from {list_config.source_url}...")
 
-        entries, errors = self.fetcher.fetch(list_config.source_url)
+        entries, errors = self.fetcher.fetch(list_config.source_url, family=list_config.family)
 
         if errors:
             for err in errors[:10]:  # Limit error output
