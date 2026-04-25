@@ -22,7 +22,7 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/dynamic-ipset update {name}
+ExecStart=/usr/bin/dynamic-ipset update {name}
 StandardOutput=journal
 StandardError=journal
 

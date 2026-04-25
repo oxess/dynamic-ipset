@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dynamic-ipset"
-version = "0.1.0"
+version = "1.1.2"
 description = "Dynamic ipset management from URL sources"
 readme = "README.md"
 license = {text = "MIT"}

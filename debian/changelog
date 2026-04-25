@@ -1,3 +1,9 @@
+dynamic-ipset (0.1.2) stable; urgency=medium
+
+  * fix: update systemd service file to use ExecStartPre
+
+ -- Mikołaj Jeziorny <mikijezi@gmail.com>  Sat, 26 Apr 2026 00:09:57 +0200
+
 dynamic-ipset (0.1.1-1) unstable; urgency=medium
 
   * fix: updated ExecStart path for dynamic-ipset systemd service
