@@ -7,7 +7,7 @@ ConditionPathExists=/etc/dynamic-ipset/config.d/%i.conf
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/dynamic-ipset update %i
+ExecStart=/usr/bin/dynamic-ipset update %i
 StandardOutput=journal
 StandardError=journal
 
