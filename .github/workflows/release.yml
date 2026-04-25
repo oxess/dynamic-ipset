@@ -44,8 +44,6 @@ jobs:
         run: |
           mkdir -p release
           find artifacts -name "*.deb" -exec cp {} release/ \;
-          find artifacts -name "*.whl" -exec cp {} release/ \;
-          find artifacts -name "*.tar.gz" -exec cp {} release/ \;
           ls -la release/
 
       - name: Create GitHub Release
