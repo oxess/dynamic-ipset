@@ -1,3 +1,12 @@
+dynamic-ipset (1.0.0) stable; urgency=medium
+
+  * chore: bump version to 1.0.0
+  * ci: remove unused artifact copying steps from release workflow
+  * refactor: remove static systemd unit templates in favor of dynamic generation
+  * ci: fixed problem with permissions in CI/CD
+
+ -- Mikołaj Jeziorny <mikijezi@gmail.com>  Sat, 26 Apr 2026 00:09:57 +0200
+
 dynamic-ipset (0.1.2) stable; urgency=medium
 
   * fix: update systemd service file to use ExecStartPre
