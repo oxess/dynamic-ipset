@@ -2,7 +2,6 @@
 
 PREFIX ?= /usr/local
 SYSCONFDIR ?= /etc
-SYSTEMD_UNIT_DIR ?= /lib/systemd/system
 PYTHON ?= python3
 DESTDIR ?=
 
@@ -42,22 +41,15 @@ install:
 	install -D -m 644 etc/dynamic-ipset/config $(DESTDIR)$(SYSCONFDIR)/dynamic-ipset/config
 	install -d -m 755 $(DESTDIR)$(SYSCONFDIR)/dynamic-ipset/config.d
 
-	# Install systemd templates
-	install -D -m 644 systemd/dynamic-ipset@.service $(DESTDIR)$(SYSTEMD_UNIT_DIR)/dynamic-ipset@.service
-	install -D -m 644 systemd/dynamic-ipset@.timer $(DESTDIR)$(SYSTEMD_UNIT_DIR)/dynamic-ipset@.timer
-
 	@echo ""
 	@echo "Installation complete!"
-	@echo "Run 'systemctl daemon-reload' to load new systemd units."
 
 uninstall:
 	# Stop and disable all timers
 	-systemctl stop 'dynamic-ipset-*.timer' 2>/dev/null || true
 	-systemctl disable 'dynamic-ipset-*.timer' 2>/dev/null || true
 
-	# Remove systemd units
-	rm -f $(DESTDIR)$(SYSTEMD_UNIT_DIR)/dynamic-ipset@.service
-	rm -f $(DESTDIR)$(SYSTEMD_UNIT_DIR)/dynamic-ipset@.timer
+	# Remove dynamically generated systemd units
 	rm -f $(DESTDIR)/etc/systemd/system/dynamic-ipset-*.service
 	rm -f $(DESTDIR)/etc/systemd/system/dynamic-ipset-*.timer
 

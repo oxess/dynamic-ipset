@@ -13,12 +13,9 @@ override_dh_auto_install:
 	# Install default config
 	install -D -m 644 etc/dynamic-ipset/config debian/dynamic-ipset/etc/dynamic-ipset/config
 	install -d -m 755 debian/dynamic-ipset/etc/dynamic-ipset/config.d
-	# Install systemd units
-	install -D -m 644 systemd/dynamic-ipset@.service debian/dynamic-ipset/lib/systemd/system/dynamic-ipset@.service
-	install -D -m 644 systemd/dynamic-ipset@.timer debian/dynamic-ipset/lib/systemd/system/dynamic-ipset@.timer
 
 override_dh_installsystemd:
-	# Skip automatic systemd handling since we use template units
+	# Systemd units are generated dynamically by the application
 	dh_installsystemd --no-enable --no-start
 
 override_dh_auto_test:

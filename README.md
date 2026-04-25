@@ -238,7 +238,6 @@ dynamic-ipset/
 │   └── validator.py        # Input validation
 ├── tests/                   # Test suite
 ├── debian/                  # Debian packaging
-├── systemd/                 # Systemd unit templates
 ├── etc/dynamic-ipset/       # Default configuration
 ├── bin/                     # CLI entry point
 ├── Makefile
