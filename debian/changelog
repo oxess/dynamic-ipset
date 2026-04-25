@@ -1,3 +1,11 @@
+dynamic-ipset (0.1.1-1) unstable; urgency=medium
+
+  * fix: updated ExecStart path for dynamic-ipset systemd service
+  * fix: fetching IPv6 addresses with mask
+  * refactor: replace TypeHint syntax with Optional for better readability
+
+ -- Dynamic IPSet Contributors <noreply@example.com>  Sat, 25 Apr 2026 23:07:57 +0200
+
 dynamic-ipset (0.1.0-1) unstable; urgency=medium
 
   * Initial release.
