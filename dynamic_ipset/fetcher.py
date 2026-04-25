@@ -2,6 +2,7 @@
 
 import logging
 import ssl
+from typing import Optional
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
@@ -24,7 +25,7 @@ class IPListFetcher:
         """
         self.timeout = timeout
 
-    def fetch(self, url: str, family: str | None = None) -> tuple[list[str], list[str]]:
+    def fetch(self, url: str, family: Optional[str] = None) -> tuple[list[str], list[str]]:
         """
         Fetch IP list from URL.
 
@@ -57,7 +58,7 @@ class IPListFetcher:
             raise FetchError(f"Failed to fetch {url}: {e}") from e
 
     def _parse_ip_list(
-        self, content: str, family: str | None = None
+        self, content: str, family: Optional[str] = None
     ) -> tuple[list[str], list[str]]:
         """
         Parse IP list content.
@@ -110,9 +111,7 @@ class IPListFetcher:
                     errors.append(f"Line {line_num}: {e}")
 
         if skipped:
-            logger.debug(
-                "Skipped %d entries not matching family '%s'", skipped, family
-            )
+            logger.debug("Skipped %d entries not matching family '%s'", skipped, family)
 
         return entries, errors
 
@@ -178,7 +177,7 @@ class IPListFetcher:
 
 
 def fetch_ip_list(
-    url: str, timeout: int = DEFAULT_TIMEOUT, family: str | None = None
+    url: str, timeout: int = DEFAULT_TIMEOUT, family: Optional[str] = None
 ) -> tuple[list[str], list[str]]:
     """
     Convenience function to fetch an IP list.
